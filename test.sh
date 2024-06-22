@@ -10,7 +10,7 @@ if [ -f ./assignment-autotest/docker/options ]; then
     . ./assignment-autotest/docker/options
     parse_docker_options "$@"
 fi
-./test-unit.sh
+./unit-test.sh
 
 # If there's a configuration for the assignment number, use this to look for
 # additional tests
