@@ -20,9 +20,20 @@ int main(int argc, char *argv[])
     if (filePointer == NULL)
     {
         syslog(LOG_ERR, "Could not open file.\n");
+        closelog();
         return 1;
     }
-    fprintf(filePointer, "%s\n", writeString);
+    int numBytes = fprintf(filePointer, "%s\n", writeString);
 
+    if (numBytes <= 0)
+    {
+        syslog(LOG_ERR, "Failed to write to file.\n");
+        closelog();
+        fclose(filePointer);
+        return 1;
+    }
+
+    fclose(filePointer);
+    closelog();
     return 0;
 }
