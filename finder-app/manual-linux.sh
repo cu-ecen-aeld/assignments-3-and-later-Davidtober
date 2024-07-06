@@ -91,17 +91,17 @@ ${CROSS_COMPILE}readelf -a bin/busybox | grep "program interpreter"
 ${CROSS_COMPILE}readelf -a bin/busybox | grep "Shared library"
 
 # TODO: Add library dependencies to rootfs
-cp ~/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib/ld-linux-aarch64.so.1 lib/
-cp ~/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64/libm.so.6 lib64/
-cp ~/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64/libresolv.so.2 lib64/
-cp ~/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/aarch64-none-linux-gnu/libc/lib64/libc.so.6 lib64/
+cd ${FINDER_APP_DIR}/libc
+cp ld-linux-aarch64.so.1 ${OUTDIR}/rootfs/lib/
+cp libm.so.6 ${OUTDIR}/rootfs/lib64/
+cp libresolv.so.2 ${OUTDIR}/rootfs/lib64/
+cp libc.so.6 ${OUTDIR}/rootfs/lib64/
 
 # TODO: Make device nodes
-sudo mknod -m 622 dev/console c 5 1
-sudo mknod -m 666 dev/null c 1 3
+sudo mknod -m 622 ${OUTDIR}/rootfs/dev/console c 5 1
+sudo mknod -m 666 ${OUTDIR}/rootfs/dev/null c 1 3
 
 # TODO: Clean and build the writer utility
-echo "Script directory: ${FINDER_APP_DIR}"
 cd ${FINDER_APP_DIR}
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}
