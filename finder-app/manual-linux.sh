@@ -41,7 +41,8 @@ if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
 
     # TODO: Add your kernel build steps here
     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} defconfig
-    curl https://github.com/torvalds/linux/commit/e33a814e772cdc36436c8c188d8c42d019fda639.diff | git apply
+    wget -O patch.diff https://github.com/torvalds/linux/commit/e33a814e772cdc36436c8c188d8c42d019fda639.diff
+    git apply patch.diff
     make -j8 ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} all
     # make -j8 ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} modules
     make -j8 ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} dtbs
