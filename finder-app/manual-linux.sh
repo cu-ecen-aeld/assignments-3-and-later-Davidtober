@@ -67,9 +67,9 @@ mkdir -p "${OUTDIR}/rootfs"
 cd "$OUTDIR"
 if [ ! -d "${OUTDIR}/busybox" ]
 then
-    git clone git://busybox.net/busybox.git --depth 1 --single-branch --branch ${KERNEL_VERSION}
+    git clone git://busybox.net/busybox.git --depth 1 --single-branch --branch ${BUSYBOX_VERSION}
     cd busybox
-    git checkout ${BUSYBOX_VERSION}
+    # git checkout ${BUSYBOX_VERSION}
     # TODO:  Configure busybox
 else
     cd busybox
