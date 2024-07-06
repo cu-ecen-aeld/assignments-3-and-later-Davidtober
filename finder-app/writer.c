@@ -7,6 +7,7 @@ int main(int argc, char *argv[])
     if (argc <= 2)
     {
         syslog(LOG_ERR, "Not enough arguments provided\n");
+        closelog();
         return 1;
     }
 
