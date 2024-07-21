@@ -208,6 +208,12 @@ int main(int argc, char *argv[])
         perror("signal");
         exit(EXIT_FAILURE);
     }
+
+    if (signal(SIGTERM, sigint_handler) == SIG_ERR)
+    {
+        perror("signal");
+        exit(EXIT_FAILURE);
+    }
     remove(OUTPUT_FILE);
 
     openSocket();
