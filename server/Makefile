@@ -3,7 +3,7 @@ TARGET = aesdsocket
 OBJS := $(SRC:.c=.o)
 
 CC = $(CROSS_COMPILE)gcc
-CFLAGS := $(CFLAGS) -Wall -Werror -g
+CFLAGS := $(CFLAGS) -Wall -Werror -g -D_GNU_SOURCE
 
 all: $(TARGET)
 
