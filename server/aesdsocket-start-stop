@@ -1,11 +1,12 @@
 #!/bin/sh
 
 start() {
-    start-stop-daemon -S --exec /usr/bin/aesdsocket -- -d
+   start-stop-daemon -S --exec /usr/bin/aesdsocket -- -d
 }
 
 stop() {
-    start-stop-daemon -K --exec /usr/bin/aesdsocket
+   start-stop-daemon -K --exec /usr/bin/aesdsocket
+   rm /var/tmp/aesdsocketdata
 }
 
 case "$1" in
