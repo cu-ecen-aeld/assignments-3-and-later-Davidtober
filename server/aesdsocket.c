@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
         closelog();
         exit(EXIT_FAILURE);
     }
-
+    remove(OUTPUT_FILE);
     openSocket();
 
     if (daemonMode)
