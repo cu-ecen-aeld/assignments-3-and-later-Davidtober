@@ -131,7 +131,6 @@ void readData(int sock, pthread_mutex_t *outputFileMutex)
         else if (size == 0)
         {
             // Connection closed by the client
-            printf("Closing connection!\n");
             break;
         }
 
@@ -148,10 +147,7 @@ void readData(int sock, pthread_mutex_t *outputFileMutex)
 
         if (buffer[totalBytesReceived] == '\n')
         {
-            printf("Received new line!\n");
             // Newline character received, output string to file
-            printf("Outputting string: %s\n", buffer);
-
             if (writeToFile(buffer, outputFileMutex) < 0)
             {
                 return;
@@ -233,10 +229,9 @@ void openSocket()
 void *handleNewConnection(void *threadParams)
 {
     struct thread_data *threadData = (struct thread_data *)threadParams;
-    threadData->thread = pthread_self();
+    threadData->completed = false;
     readData(threadData->socket, threadData->outputFileMutex);
     threadData->completed = true;
-    threadData->thread = pthread_self();
 
     return 0;
 }
@@ -328,40 +323,35 @@ int main(int argc, char *argv[])
         if (pollCount > 0)
         {
             int newSocket = acceptNewConnection(SOCKET);
-            struct thread_data threadData = {.outputFileMutex = &outputFileMutex, .completed = false, .socket = newSocket};
-            printf("Connection accepted!\n");
+            struct thread_data *threadData = malloc(sizeof(struct thread_data));
+            threadData->outputFileMutex = &outputFileMutex;
+            threadData->completed = false;
+            threadData->socket = newSocket;
+
             pthread_t thread;
-            if (pthread_create(&thread, NULL, handleNewConnection, &threadData) != 0)
+            if (pthread_create(&thread, NULL, handleNewConnection, threadData) != 0)
             {
                 perror("pthread_create");
                 break;
             }
-            printf("Created thread %lu!\n", thread);
-            threadData.thread = thread;
+            threadData->thread = thread;
             // handleNewConnection((void *)&threadData);
             slist_data_s *threadNode = malloc(sizeof(slist_data_s));
-            threadNode->data = &threadData;
+            threadNode->data = threadData;
             SLIST_INSERT_HEAD(&head, threadNode, nodes);
-            printf("Created thread %lu!\n", threadNode->data->thread);
-        }
-
-        if (pollCount > 0)
-        {
-            printf("Out of scope: %lu!\n", SLIST_FIRST(&head)->data->thread);
         }
 
         slist_data_s *node, *tmp;
         SLIST_FOREACH_SAFE(node, &head, nodes, tmp)
         {
             // printf("Checking thread %lu!\n", node->data->thread);
-            if ((*(node->data)).completed)
+            if (node->data->completed)
             {
                 // Remove node from linked list and free memory
-                pthread_t thread = (*(node->data)).thread;
-                printf("Joining thread %lu!\n", thread);
+                pthread_t thread = node->data->thread;
                 pthread_join(thread, NULL);
                 SLIST_REMOVE(&head, node, slist_data_s, nodes);
-                printf("Thread completed: %lu\n", thread);
+                free(node->data);
                 free(node);
             }
         }
@@ -385,7 +375,6 @@ int main(int argc, char *argv[])
     SLIST_FOREACH_SAFE(node, &head, nodes, tmp)
     {
         // Remove nodes from linked list and free memory
-        printf("Joining thread!\n");
         pthread_join((*(node->data)).thread, 0);
         SLIST_REMOVE(&head, node, slist_data_s, nodes);
         free(node->data);
