@@ -11,6 +11,8 @@ endif
 
 EXTRA_CFLAGS += $(DEBFLAGS)
 
+CC ?= $(CROSS_COMPILE)gcc
+
 ifneq ($(KERNELRELEASE),)
 # call from kernel build system
 obj-m	:= aesdchar.o
